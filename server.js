@@ -40,20 +40,28 @@ const questions = [
   },
 ];
 
+// SELECT e.id_emp, e.first_name, e.last_name, d.id_dpt,d.dpt_name, id_role, r.role_name
+// FROM employee AS e
+// JOIN departments AS d ON d.id_emp = e.id_emp
+// JOIN roles AS r ON d.id_dpt = r.id_dpt;
+
 // Function to initiate the process of the answers.
 async function init() {
   const answers = await inquirer.prompt(questions);
   //Query all employees
   if (answers.action == "View All Employees") {
-    pool.query("SELECT * from employee", (err, res) => {
-      if (!err) {
-        console.table(res.rows);
-      } else {
-        console.log(err.message);
+    pool.query(
+      "SELECT e.id_emp, e.first_name, e.last_name, d.id_dpt,d.dpt_name, id_role, r.role_name FROM employee AS e JOIN departments AS d ON d.id_emp = e.id_emp JOIN roles AS r ON d.id_dpt = r.id_dpt",
+      (err, res) => {
+        if (!err) {
+          console.table(res.rows);
+        } else {
+          console.log(err.message);
+        }
+        pool.end;
+        init();
       }
-      pool.end;
-      init();
-    });
+    );
   }
   if (answers.action == "Add Employee") {
     inquirer.prompt([
