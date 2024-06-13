@@ -17,18 +17,12 @@ CREATE TABLE employee (
 CREATE TABLE departments (
     id_dpt SERIAL PRIMARY KEY,
     dpt_name VARCHAR(30) NOT NULL,
-    id_emp INT,
-    FOREIGN KEY (id_emp)
-    REFERENCES employee (id_emp)
-    ON DELETE SET NULL 
+    id_emp INT
 );
 
 -- Creating table departaments and id_dpt is the PK field and id_dpt is the FK
 CREATE TABLE roles (
     id_role SERIAL PRIMARY KEY,
     role_name VARCHAR(30) NOT NULL,
-    id_dpt INT,
-    FOREIGN KEY (id_dpt)
-    REFERENCES departments(id_dpt)
-    ON DELETE SET NULL 
-);
+    id_dpt INT
+ );

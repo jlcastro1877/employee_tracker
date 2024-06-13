@@ -52,6 +52,7 @@ async function init() {
         console.log(err.message);
       }
       pool.end;
+      init();
     });
   }
   if (answers.action == "Add Employee") {
@@ -63,13 +64,52 @@ async function init() {
       },
     ]);
 
-    pool.query("SELECT * from employee", (err, res) => {
+    pool.query("ADD EMPLOYEE", (err, res) => {
       if (!err) {
         console.table(res.rows);
       } else {
         console.log(err.message);
       }
       pool.end;
+      init();
+    });
+  }
+  if (answers.action == "View All Roles") {
+    inquirer.prompt([
+      {
+        type: "string",
+        message: "Type the First Name, Last Name and Addresss",
+        name: "View All Roles",
+      },
+    ]);
+
+    pool.query("SELECT * from roles", (err, res) => {
+      if (!err) {
+        console.table(res.rows);
+      } else {
+        console.log(err.message);
+      }
+      pool.end;
+      init();
+    });
+  }
+  if (answers.action == "View All Departments") {
+    inquirer.prompt([
+      {
+        type: "string",
+        message: "Type the First Name, Last Name and Addresss",
+        name: "View All Departments",
+      },
+    ]);
+
+    pool.query("SELECT * from departments", (err, res) => {
+      if (!err) {
+        console.table(res.rows);
+      } else {
+        console.log(err.message);
+      }
+      pool.end;
+      init();
     });
   }
 }
