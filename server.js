@@ -40,11 +40,6 @@ const questions = [
   },
 ];
 
-// SELECT e.id_emp, e.first_name, e.last_name, d.id_dpt,d.dpt_name, id_role, r.role_name
-// FROM employee AS e
-// JOIN departments AS d ON d.id_emp = e.id_emp
-// JOIN roles AS r ON d.id_dpt = r.id_dpt;
-
 // Function to initiate the process of the answers.
 async function init() {
   const answers = await inquirer.prompt(questions);
@@ -64,23 +59,51 @@ async function init() {
     );
   }
   if (answers.action == "Add Employee") {
-    inquirer.prompt([
-      {
-        type: "string",
-        message: "Type the First Name, Last Name and Addresss",
-        name: "Add Employee",
-      },
-    ]);
-
-    pool.query("ADD EMPLOYEE", (err, res) => {
-      if (!err) {
-        console.table(res.rows);
-      } else {
-        console.log(err.message);
-      }
-      pool.end;
-      init();
-    });
+    // Prompt the user for multiple inputs
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "first_name",
+          message: "Enter Employees First Name:",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "Employees Last Name:",
+        },
+        {
+          type: "list",
+          name: "department",
+          message: "Which Department Will this Employee Belong to?",
+          choices: [
+            "Finance",
+            "Accouting",
+            "Cost",
+            "Board of Directors",
+            "Risk Analysis",
+          ],
+        },
+        {
+          type: "list",
+          name: "role",
+          message: "What role will be assigned to the Employee?",
+          choices: [
+            "Assistant",
+            "Controller",
+            "Manager",
+            "Developer",
+            "Engineer",
+          ],
+        },
+      ])
+      .then((answers) => {
+        // Log the user's inputs
+        console.log("first_name", answers.first_name);
+        console.log("Age:", answers.last_name);
+        console.log("department:", answers.department);
+        console.log("Role:", answers.role);
+      });
   }
   if (answers.action == "View All Roles") {
     inquirer.prompt([
