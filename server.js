@@ -20,7 +20,7 @@ const pool = new Pool(
   console.log(`Connected to the employees_db database.`) //If success message that it was connect to database
 );
 
-pool.connect();
+pool.connect(); //Connect to the database
 
 //Questions to the user
 const questions = [
@@ -31,7 +31,6 @@ const questions = [
     choices: [
       "View All Employees",
       "Add Employee",
-      "Update Employee Role",
       "View All Roles",
       "Add Role",
       "View All Departments",
@@ -46,7 +45,7 @@ async function init() {
   //Query all employees
   if (answers.action == "View All Employees") {
     pool.query(
-      "SELECT e.id_emp, e.first_name, e.last_name, d.id_dpt,d.dpt_name, id_role, r.role_name FROM employee AS e JOIN departments AS d ON d.id_emp = e.id_emp JOIN roles AS r ON d.id_dpt = r.id_dpt",
+      "SELECT e.id_emp,e.first_name,e.last_name,r.role_name,d.dpt_name FROM employee AS e JOIN roles AS r ON e.role_id = r.id_role JOIN departments AS d ON e.dpt_id = d.id_dpt",
       (err, res) => {
         if (!err) {
           console.table(res.rows);
@@ -58,8 +57,10 @@ async function init() {
       }
     );
   }
+  // To add an employee, I am using a switch case
+  // where I compare the information inputted by the user and link this
+  // with the ID numbers of the departments and roles.
   if (answers.action == "Add Employee") {
-    // Prompt the user for multiple inputs
     inquirer
       .prompt([
         {
@@ -98,22 +99,66 @@ async function init() {
         },
       ])
       .then((answers) => {
-        // Log the user's inputs
-        console.log("first_name", answers.first_name);
-        console.log("Age:", answers.last_name);
-        console.log("department:", answers.department);
-        console.log("Role:", answers.role);
+        let dpt_id = 0;
+        let role_id = 0;
+
+        switch (answers.role) {
+          case "Assistant":
+            role_id = 1;
+            break;
+          case "Controller":
+            role_id = 2;
+            break;
+          case "Manager":
+            role_id = 3;
+            break;
+          case "Developer":
+            role_id = 4;
+            break;
+          case "Engineer":
+            role_id = 5;
+            break;
+          default:
+            role_id = 1;
+        }
+
+        switch (answers.department) {
+          case "Finance":
+            dpt_id = 1;
+            break;
+          case "Accouting":
+            dpt_id = 2;
+            break;
+          case "Cost":
+            dpt_id = 3;
+            break;
+          case "Board of Directors":
+            dpt_id = 4;
+            break;
+          case "Risk Analysis":
+            dpt_id = 5;
+            break;
+          default:
+            dpt_id = 1;
+        }
+
+        pool.query(
+          "INSERT INTO employee (first_name, last_name, role_id, dpt_id) VALUES ($1, $2, $3, $4)",
+          [answers.first_name, answers.last_name, role_id, dpt_id],
+          (err, res) => {
+            if (!err) {
+              console.log(
+                `${answers.first_name} ${answers.last_name} ${role_id} ${dpt_id} Data inserted successfully!`
+              );
+            } else {
+              console.error("Error inserting data:", err.message);
+            }
+            pool.end();
+          }
+        );
       });
   }
   if (answers.action == "View All Roles") {
-    inquirer.prompt([
-      {
-        type: "string",
-        message: "Type the First Name, Last Name and Addresss",
-        name: "View All Roles",
-      },
-    ]);
-
     pool.query("SELECT * from roles", (err, res) => {
       if (!err) {
         console.table(res.rows);
@@ -121,9 +166,34 @@ async function init() {
         console.log(err.message);
       }
       pool.end;
-      init();
     });
   }
+  //Adding new role
+  if (answers.action == "Add Role") {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "role_name",
+          message: "Enter the Role Name",
+        },
+      ])
+      .then((answers) => {
+        pool.query(
+          "INSERT INTO roles (role_name) VALUES ($1)",
+          [answers.role_name],
+          (err, res) => {
+            if (!err) {
+              console.log(`${answers.role_name} inserted successfully!`);
+            } else {
+              console.error("Error inserting data:", err.message);
+            }
+            pool.end();
+          }
+        );
+      });
+  }
+
   if (answers.action == "View All Departments") {
     inquirer.prompt([
       {
@@ -142,6 +212,32 @@ async function init() {
       pool.end;
       init();
     });
+  }
+
+  //Adding new Department
+  if (answers.action == "Add Department") {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "dpt_name",
+          message: "Enter the Department Name",
+        },
+      ])
+      .then((answers) => {
+        pool.query(
+          "INSERT INTO departments (dpt_name) VALUES ($1)",
+          [answers.dpt_name],
+          (err, res) => {
+            if (!err) {
+              console.log(`${answers.dpt_name} inserted successfully!`);
+            } else {
+              console.error("Error inserting data:", err.message);
+            }
+            pool.end();
+          }
+        );
+      });
   }
 }
 

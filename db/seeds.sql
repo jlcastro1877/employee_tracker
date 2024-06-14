@@ -1,20 +1,15 @@
-INSERT INTO employee (first_name, last_name, address_emp)
-VALUES ('Jorge','Castro','123 Flower Lane'),
-       ('Luly','Smith','654 Alpine Dr'),
-       ('David','Harmon','852 New Creek Dr'),
-       ('Philipe','Pierce','1550 Lake Mountain Dr'),
-       ('Russel', 'Nelson', '550 Eagle Mountain');
+INSERT INTO roles (role_name)
+VALUES ('Assistant'),
+       ('Controller');
+     
 
-INSERT INTO departments (dpt_name, id_emp)
-VALUES ('Finance', 1),
-       ('Accounting', 2),
-       ('Cost', 3),
-       ('Board of Directors', 4),
-       ('Risk analysis', 5);
-
-INSERT INTO roles (role_name, id_dpt)
-VALUES ('Assistant', 1),
-       ('Controller', 2),
-       ('Manager', 3),
-       ('Developer', 4),
-       ('Engineer', 5);
+INSERT INTO departments (dpt_name)
+VALUES ('Finance'),
+       ('Accounting');
+       
+INSERT INTO employee (first_name, last_name, role_id, dpt_id)
+VALUES ('Jorge','Castro',1,2),  
+       ('Luly','Smith',2,1);    
+       
+       
+       
